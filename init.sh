@@ -17,7 +17,7 @@ sudo apt-get install -y php5 apache2 libapache2-mod-php5 php5-mysql
 #
 # Utilities
 #
-sudo apt-get install -y make curl htop git-core vim mercurial
+sudo apt-get install -y make curl htop git-core vim mercurial sendmail
 
 #
 # MySQL Configuration
@@ -71,7 +71,28 @@ sudo a2dissite 000-default
 sudo service apache2 reload
 sudo service apache2 restart
 
+#
+# Install WP-CLI
+#
+cd /usr/local/lib
+if [ ! -e /usr/local/lib/wp-cli/bin/wp ]; then
+  printf "\nInstalling wp-cli\n"
+  git clone git://github.com/wp-cli/wp-cli.git /usr/local/lib/wp-cli
+  cd /usr/local/lib/wp-cli
+  composer install
+else
+  printf "\nSkip wp-cli installation, already available\n"
+fi
 
+#
+# Link wp to the /usr/local/bin directory
+#
+sudo ln -sf /usr/local/lib/wp-cli/bin/wp /usr/local/bin/wp
+
+
+#
+# Set basic wordpress variables
+#
 mysqlhost=localhost
 mysqldb=vagrantwpdb
 mysqluser=root
@@ -82,34 +103,29 @@ wppass=vagrant
 wpemail=youremail@mail.com
 siteurl=192.168.0.101
 
-cd ~
-wget http://wordpress.org/latest.tar.gz
-tar zxf latest.tar.gz
-cd wordpress/
+#
+# Creating database for wordpress
+#
+mysql -u root -Bse "CREATE DATABASE IF NOT EXISTS $mysqldb"
 
-wget -O /tmp/wp.keys https://api.wordpress.org/secret-key/1.1/salt
-
-sed -e "s/localhost/"$mysqlhost"/" -e "s/database_name_here/"$mysqldb"/" -e "s/username_here/"$mysqluser"/" -e "s/password_here/"$mysqlpass"/" wp-config-sample.php > wp-config.php
-sed -i '/#@-/r /tmp/wp.keys' wp-config.php
-sed -i "/#@+/,/#@-/d" wp-config.php
-
-mysql -u root -Bse "create database $mysqldb;"
-sudo rm /vagrant/www/index.html
-curl -d "weblog_title=$wptitle&user_name=$wpuser&admin_password=$wppass&admin_password2=$wppass&admin_email=$wpemail" http://$siteurl/wp-admin/install.php?step=2
-
-cd ../
-mv wordpress/* /vagrant/www/
-
-rmdir wordpress
-rm latest.tar.gz
-rm /tmp/wp.keys
+#
+# Downloading, configuring and installing wordpress with WP-CLI
+#
+cd /vagrant/www
+sudo wp core download --path=/vagrant/www --allow-root
+sudo wp core config --dbname=$mysqldb --dbuser=$mysqluser --allow-root --extra-php <<PHP
+define( "WP_DEBUG", true);
+define( "WP_DEBUG_LOG", true);
+PHP
+sudo wp core install --url=$siteurl --quiet --title="$wptitle" --admin_name=$wpuser --admin_password=$wppass --admin_email=$wpemail --allow-root
 
 
-echo -e "----------------------------------------"
-echo -e "To work in your Wordpress project:\n"
-echo -e "----------------------------------------"
-echo -e "$ cd /vagrant/www"
+#
+# Final message
+#
 echo -e
 echo -e "----------------------------------------"
-echo -e "Default Site: http://192.168.0.101"
+echo -e "Installation is complete"
+echo -e
+echo -e "You can visit wordpress at: http://$siteurl"
 echo -e "----------------------------------------"
