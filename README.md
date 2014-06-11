@@ -1,6 +1,7 @@
-#Vagrant + Wordpress on basic Debian Wheezy64 with apache2 and MySQL
+#Vagrant + Wordpress
+##Debian Wheezy64
 
-This is a simple vagrant setup to get loaded with apache2 and mysql.
+This is a simple vagrant setup to get loaded with latest Wordpress for develop.
 
 ## Overview
 
@@ -40,7 +41,11 @@ If you want to point your Guest Machine (The Virtual Machine OS) to a friendly U
 
     192.168.0.101  your-server-name
 
+Your should change in the init.sh file, the siteurl variable to your-server-name
 
+    wpemail=youremail@mail.com
+    siteurl=your-server-name
+    
 ## Vagrant Credentials
 
 These are credentials setup by default:
