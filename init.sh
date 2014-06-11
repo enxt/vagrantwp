@@ -94,6 +94,7 @@ sed -i '/#@-/r /tmp/wp.keys' wp-config.php
 sed -i "/#@+/,/#@-/d" wp-config.php
 
 mysql -u root -Bse "create database $mysqldb;"
+sudo rm /vagrant/www/index.html
 curl -d "weblog_title=$wptitle&user_name=$wpuser&admin_password=$wppass&admin_password2=$wppass&admin_email=$wpemail" http://$siteurl/wp-admin/install.php?step=2
 
 cd ../
