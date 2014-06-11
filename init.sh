@@ -83,7 +83,7 @@ wptitle="Vagrant WP"
 wpuser=admin
 wppass=vagrant
 wpemail=youremail@mail.com
-siteurl=localhost
+siteurl=192.168.0.101
 
 cd ~
 wget http://wordpress.org/latest.tar.gz
