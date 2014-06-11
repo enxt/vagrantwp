@@ -33,9 +33,6 @@ sudo sed -i 's/bind-address/bind-address = 0.0.0.0#/' /etc/mysql/my.cnf
 mysql -u root -Bse "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '' WITH GRANT OPTION;"
 sudo service mysql restart
 
-
-mysql -u root -Bse "create database vagrantwpdb;"
-
 #
 # Composer for PHP
 #
