@@ -43,7 +43,6 @@ If you want to point your Guest Machine (The Virtual Machine OS) to a friendly U
 
 Your should change in the init.sh file, the siteurl variable to your-server-name
 
-    wpemail=youremail@mail.com
     siteurl=your-server-name
     
 ## Vagrant Credentials
